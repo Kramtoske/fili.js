@@ -8,7 +8,7 @@ A digital filter library for JavaScript.
 ## Installation
 
 ```
-$ npm install fili
+$ npm i @kramtoske/fili
 ```
 
 ## Usage
