@@ -7,11 +7,15 @@ STANDARD = $(BIN)/standard
 build:
 	$(BROWSERIFY) ./index.js \
 	--standalone Fili \
-	-t [babelify --stage 0] \
+	-t [babelify] \
 	-t [envify --NODE_ENV production] \
 	-p [bannerify --file ./dist/banner.txt] \
 	-o ./dist/fili.js
 	$(UGLIFY) ./dist/fili.js --compress --mangle --comments -o ./dist/fili.min.js
+	npm run sbom
+
+sbom:
+	npm run sbom
 
 test:
 	npm test
@@ -35,4 +39,4 @@ ghpages:
 standard:
 	$(STANDARD)
 
-.PHONY: test build beautify ghpages standard
+.PHONY: test build sbom beautify ghpages standard

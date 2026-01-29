@@ -1,38 +1,47 @@
 {
   "name": "fili",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "main": "dist/fili.min.js",
   "author": "Florian Markert",
   "license": "MIT",
-  "dependencies": {},
   "devDependencies": {
-    "babel": "^5.5.8",
-    "babelify": "^6.1.2",
+    "@babel/core": "^7.24.0",
+    "@babel/preset-env": "^7.24.0",
+    "@cyclonedx/cyclonedx-npm": "^4.1.2",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "ajv-formats-draft2019": "^1.6.1",
+    "babelify": "^10.0.0",
     "bannerify": "^1.0.1",
-    "browserify": "^10.2.4",
-    "envify": "^3.4.0",
-    "istanbul": "^0.3.21",
-    "mocha": "^2.2.5",
-    "should": "^6.0.3",
-    "standard": "^8.5.0",
-    "uglify-js": "^2.4.23"
+    "browserify": "^17.0.1",
+    "envify": "^4.1.0",
+    "istanbul": "^0.4.5",
+    "mocha": "^11.3.0",
+    "should": "^13.2.3",
+    "standard": "^17.1.2",
+    "uglify-js": "^3.19.3"
   },
   "scripts": {
-    "test": "standard && istanbul cover _mocha -- --compilers js:babel/register --recursive test"
+    "test": "standard && mocha --recursive test",
+    "sbom": "mkdir -p dist && cyclonedx-npm --package-lock-only --ignore-npm-errors --validate --output-file dist/sbom.cdx.json"
   },
   "browserify": {
     "transform": [
       [
         "babelify",
         {
-          "stage": 0
+          "presets": [
+            "@babel/preset-env"
+          ]
         }
       ]
     ]
   },
   "standard": {
     "ignore": [
-      "dist/**"
+      "dist/**",
+      "demo/**",
+      "test/**"
     ]
   }
 }

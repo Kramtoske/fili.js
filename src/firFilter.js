@@ -1,6 +1,6 @@
 'use strict'
 
-var {
+const {
   runMultiFilter,
   runMultiFilterReverse,
   complex,
@@ -10,11 +10,11 @@ var {
 /**
  * Fir filter
  */
-var FirFilter = function (filter) {
+const FirFilter = function (filter) {
   // note: coefficients are equal to input response
-  var f = filter
-  var b = []
-  var cnt = 0
+  const f = filter
+  const b = []
+  let cnt = 0
   for (cnt = 0; cnt < f.length; cnt++) {
     b[cnt] = {
       re: f[cnt],
@@ -22,9 +22,9 @@ var FirFilter = function (filter) {
     }
   }
 
-  var initZero = function (cnt) {
-    var r = []
-    var i
+  const initZero = function (cnt) {
+    const r = []
+    let i
     for (i = 0; i < cnt; i++) {
       r.push(0)
     }
@@ -34,11 +34,11 @@ var FirFilter = function (filter) {
     }
   }
 
-  var z = initZero(f.length - 1)
+  let z = initZero(f.length - 1)
 
-  var doStep = function (input, d) {
+  const doStep = function (input, d) {
     d.buf[d.pointer] = input
-    var out = 0
+    let out = 0
     for (cnt = 0; cnt < d.buf.length; cnt++) {
       out += (f[cnt] * d.buf[(d.pointer + cnt) % d.buf.length])
     }
@@ -46,30 +46,30 @@ var FirFilter = function (filter) {
     return out
   }
 
-  var calcInputResponse = function (input) {
-    var tempF = initZero(f.length - 1)
+  const calcInputResponse = function (input) {
+    const tempF = initZero(f.length - 1)
     return runMultiFilter(input, tempF, doStep)
   }
 
-  var calcResponse = function (params) {
-    var Fs = params.Fs
-    var Fr = params.Fr
+  const calcResponse = function (params) {
+    const Fs = params.Fs
+    const Fr = params.Fr
     // z = exp(j*omega*pi) = cos(omega*pi) + j*sin(omega*pi)
     // z^-1 = exp(-j*omega*pi)
     // omega is between 0 and 1. 1 is the Nyquist frequency.
-    var theta = -Math.PI * (Fr / Fs) * 2
-    var h = {
+    const theta = -Math.PI * (Fr / Fs) * 2
+    let h = {
       re: 0,
       im: 0
     }
-    for (var i = 0; i < f.length - 1; i++) {
+    for (let i = 0; i < f.length - 1; i++) {
       h = complex.add(h, complex.mul(b[i], {
         re: Math.cos(theta * i),
         im: Math.sin(theta * i)
       }))
     }
-    var m = complex.magnitude(h)
-    var res = {
+    const m = complex.magnitude(h)
+    const res = {
       magnitude: m,
       phase: complex.phase(h),
       dBmagnitude: 20 * Math.log(m) * Math.LOG10E
@@ -77,15 +77,15 @@ var FirFilter = function (filter) {
     return res
   }
 
-  var self = {
+  const self = {
     responsePoint: function (params) {
       return calcResponse(params)
     },
     response: function (resolution) {
       resolution = resolution || 100
-      var res = []
-      var cnt = 0
-      var r = resolution * 2
+      const res = []
+      let cnt = 0
+      const r = resolution * 2
       for (cnt = 0; cnt < resolution; cnt++) {
         res[cnt] = calcResponse({
           Fs: r,

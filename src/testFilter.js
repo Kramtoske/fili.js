@@ -3,21 +3,21 @@
 /**
  * Test filter
  */
-var TestFilter = function (filter) {
-  var f = filter
+const TestFilter = function (filter) {
+  const f = filter
 
-  var simData = []
-  var cnt
+  const simData = []
+  let cnt
 
-  var randomValues = function (params) {
+  const randomValues = function (params) {
     for (cnt = 0; cnt < params.steps; cnt++) {
       simData.push(f.singleStep(((Math.random() - 0.5) * params.pp) + params.offset))
     }
   }
 
-  var stepValues = function (params) {
-    var max = params.offset + params.pp
-    var min = params.offset - params.pp
+  const stepValues = function (params) {
+    const max = params.offset + params.pp
+    const min = params.offset - params.pp
     for (cnt = 0; cnt < params.steps; cnt++) {
       if ((cnt % 200) < 100) {
         simData.push(f.singleStep(max))
@@ -27,9 +27,9 @@ var TestFilter = function (filter) {
     }
   }
 
-  var impulseValues = function (params) {
-    var max = params.offset + params.pp
-    var min = params.offset - params.pp
+  const impulseValues = function (params) {
+    const max = params.offset + params.pp
+    const min = params.offset - params.pp
     for (cnt = 0; cnt < params.steps; cnt++) {
       if (cnt % 100 === 0) {
         simData.push(f.singleStep(max))
@@ -39,11 +39,11 @@ var TestFilter = function (filter) {
     }
   }
 
-  var rampValues = function (params) {
-    var max = params.offset + params.pp
-    var min = params.offset - params.pp
-    var val = min
-    var diff = (max - min) / 100
+  const rampValues = function (params) {
+    const max = params.offset + params.pp
+    const min = params.offset - params.pp
+    let val = min
+    const diff = (max - min) / 100
     for (cnt = 0; cnt < params.steps; cnt++) {
       if (cnt % 200 < 100) {
         val += diff
@@ -54,7 +54,7 @@ var TestFilter = function (filter) {
     }
   }
 
-  var self = {
+  const self = {
     randomStability: function (params) {
       f.reinit()
       simData.length = 0
@@ -69,9 +69,9 @@ var TestFilter = function (filter) {
     directedRandomStability: function (params) {
       f.reinit()
       simData.length = 0
-      var i
+      let i
       for (i = 0; i < params.tests; i++) {
-        var choose = Math.random()
+        const choose = Math.random()
         if (choose < 0.25) {
           randomValues(params)
         } else if (choose < 0.5) {

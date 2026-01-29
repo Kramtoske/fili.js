@@ -2,37 +2,37 @@ $(document).ready(function () {
   /* global Fili, d3draw, $ */
   'use strict'
 
-  var fs = document.getElementById('fs_val')
-  var fc = document.getElementById('fc_val')
-  var fc2 = document.getElementById('fc2_val')
-  var io = document.getElementById('iir_val')
-  var fo = document.getElementById('fir_val')
-  var buir = document.getElementById('buir_val')
-  var sim = document.getElementById('f_sim')
-  var iirtxt = document.getElementById('iirtxt')
-  var coefftxt = document.getElementById('coefftxt')
-  var pregain = document.getElementById('pregain')
-  var gain = document.getElementById('gain')
+  const fs = document.getElementById('fs_val')
+  const fc = document.getElementById('fc_val')
+  const fc2 = document.getElementById('fc2_val')
+  const io = document.getElementById('iir_val')
+  const fo = document.getElementById('fir_val')
+  const buir = document.getElementById('buir_val')
+  const sim = document.getElementById('f_sim')
+  const iirtxt = document.getElementById('iirtxt')
+  const coefftxt = document.getElementById('coefftxt')
+  const pregain = document.getElementById('pregain')
+  const gain = document.getElementById('gain')
 
-  var seltrans = document.getElementById('seltrans')
-  var seltype = document.getElementById('seltype')
-  var bilinearchar = document.getElementById('bilinearchar')
-  var bilineartype = document.getElementById('bilineartype')
-  var matchedzchar = document.getElementById('matchedzchar')
-  var firtype = document.getElementById('firtype')
-  var firatt = document.getElementById('firatt')
+  const seltrans = document.getElementById('seltrans')
+  const seltype = document.getElementById('seltype')
+  const bilinearchar = document.getElementById('bilinearchar')
+  const bilineartype = document.getElementById('bilineartype')
+  const matchedzchar = document.getElementById('matchedzchar')
+  const firtype = document.getElementById('firtype')
+  const firatt = document.getElementById('firatt')
 
-  var inval = document.getElementById('in_val')
-  var run = document.getElementById('f_run')
+  const inval = document.getElementById('in_val')
+  const run = document.getElementById('f_run')
 
-  var toggleFir = function (p) {
+  const toggleFir = function (p) {
     firtype.disabled = p
     firatt.disabled = p
     fo.disabled = p
     fc2.disabled = p
   }
 
-  var toggleIir = function (p) {
+  const toggleIir = function (p) {
     io.disabled = p
     bilinearchar.disabled = p
     bilineartype.disabled = p
@@ -43,7 +43,7 @@ $(document).ready(function () {
     pregain.disabled = p
   }
 
-  var toggleBilinear = function (p) {
+  const toggleBilinear = function (p) {
     bilinearchar.disabled = !p
     bilineartype.disabled = !p
     matchedzchar.disabled = p
@@ -51,7 +51,7 @@ $(document).ready(function () {
   }
 
   seltype.onchange = function () {
-    var sel = seltype.options[seltype.selectedIndex].value
+    const sel = seltype.options[seltype.selectedIndex].value
     if (sel === 'iir') {
       toggleFir(true)
       toggleIir(false)
@@ -62,7 +62,7 @@ $(document).ready(function () {
   }
 
   seltrans.onchange = function () {
-    var sel = seltrans.options[seltrans.selectedIndex].value
+    const sel = seltrans.options[seltrans.selectedIndex].value
     if (sel === 'bilinear') {
       toggleBilinear(true)
     } else {
@@ -81,18 +81,18 @@ $(document).ready(function () {
   buir.value = 40
   inval.value = 1
 
-  var unfilteredOut = []
-  var iirCalculator = new Fili.CalcCascades()
-  var firCalculator = new Fili.FirCoeffs()
-  var runCounter = 0
+  let unfilteredOut = []
+  const iirCalculator = new Fili.CalcCascades()
+  const firCalculator = new Fili.FirCoeffs()
+  let runCounter = 0
 
-  var filter = {}
+  const filter = {}
 
-  var cnt = 0
+  let cnt = 0
 
-  var beautifyZ = function (zo) {
-    var str = ''
-    for (var k = 0; k < zo.length; k++) {
+  const beautifyZ = function (zo) {
+    let str = ''
+    for (let k = 0; k < zo.length; k++) {
       str += 'stage ' + (k + 1) + ':<br>'
       str += 'Zeros: ' + JSON.stringify(zo[k].z) + '<br>'
       str += 'Poles: ' + JSON.stringify(zo[k].p) + '<br>'
@@ -100,9 +100,9 @@ $(document).ready(function () {
     return str
   }
 
-  var beautifyCoeffs = function (c) {
-    var str = ''
-    for (var k = 0; k < c.length; k++) {
+  const beautifyCoeffs = function (c) {
+    let str = ''
+    for (let k = 0; k < c.length; k++) {
       str += 'stage ' + (k + 1) + ':<br>'
       str += 'k: ' + c[k].k + '<br>'
       str += 'a1: ' + c[k].a[0] + ' | a2: ' + c[k].a[1] + '<br>'
@@ -112,9 +112,9 @@ $(document).ready(function () {
     return str
   }
 
-  var beautifyCoeffsBin = function (c) {
-    var str = ''
-    for (var k = 0; k < c.length; k++) {
+  const beautifyCoeffsBin = function (c) {
+    let str = ''
+    for (let k = 0; k < c.length; k++) {
       str += 'stage (binary)' + (k + 1) + ':<br>'
       str += 'k: ' + c[k].k.toString(2) + ' (' + c[k].k.toString(2).split('.').pop().length + ')' + '<br>'
       str += 'a1: ' + c[k].a[0].toString(2) + ' (' + c[k].a[0].toString(2).split('.').pop().length + ')' + ' | a2: ' + c[k].a[1].toString(2) + ' (' + c[k].a[1].toString(2).split('.').pop().length + ')' + '<br>'
@@ -123,9 +123,9 @@ $(document).ready(function () {
     return str
   }
 
-  var beautifyFirCoeffs = function (c) {
-    var str = ''
-    for (var k = 0; k < c.length; k++) {
+  const beautifyFirCoeffs = function (c) {
+    let str = ''
+    for (let k = 0; k < c.length; k++) {
       str += 'stage ' + (k + 1) + ': ' + c[k] + '<br>'
     }
     return str
@@ -200,7 +200,7 @@ $(document).ready(function () {
       filter.calculation = firtype.options[firtype.selectedIndex].value
       filter.order = fo.value
       if (filter.calculation !== 'kb') {
-        var c = 'lowpass'
+        let c = 'lowpass'
         if (filter.calculation === 'sinc_hp') {
           c = 'highpass'
         } else if (filter.calculation === 'sinc_bp') {
@@ -246,7 +246,7 @@ $(document).ready(function () {
     filter.magnitude = []
     filter.magnitudedB = []
     filter.groupDelay = []
-/*
+    /*
     $.plot($('#iirimp'), [{
       data: filter.resp,
       color: '#FF0000'

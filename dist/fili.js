@@ -1,14 +1,13 @@
 /**
  * @name    fili
- * @version 2.0.3 | December 13th 2018
+ * @version 2.0.4 | January 29th 2026
  * @author  Florian Markert
  * @license MIT
  */
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Fili = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Fili = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 'use strict';
 
 module.exports = {
-
   CalcCascades: require('./src/calcCascades'),
   Fft: require('./src/fft'),
   FirCoeffs: require('./src/firCoeffs'),
@@ -16,16 +15,13 @@ module.exports = {
   IirCoeffs: require('./src/iirCoeffs'),
   IirFilter: require('./src/iirFilter'),
   TestFilter: require('./src/testFilter')
-
 };
 
 },{"./src/calcCascades":2,"./src/fft":3,"./src/firCoeffs":4,"./src/firFilter":5,"./src/iirCoeffs":6,"./src/iirFilter":7,"./src/testFilter":8}],2:[function(require,module,exports){
 'use strict';
 
 var IirCoeffs = require('./iirCoeffs');
-
 var getCoeffs = new IirCoeffs();
-
 var table = {
   // values from https://gist.github.com/endolith/4982787#file-all-values-txt
   bessel: {
@@ -66,7 +62,6 @@ var tiTable = {
     bs: [[0.8832], [1.4878, 1.1837], [1.7763, 1.6015, 1.2596], [1.9420, 1.8300, 1.6101, 1.2822], [2.0490, 1.9714, 1.8184, 1.5923, 1.2877]]
   }
 };
-
 var calcCoeffs = function calcCoeffs(params, behavior) {
   var filter = [];
   var cnt = 0;
@@ -75,9 +70,11 @@ var calcCoeffs = function calcCoeffs(params, behavior) {
       params.order = 12;
     }
     for (cnt = 0; cnt < params.order; cnt++) {
-      var q, f, fd;
+      var q = void 0,
+        f = void 0,
+        fd = void 0;
       if (params.transform === 'matchedZ') {
-        filter.push(getCoeffs['lowpassMZ']({
+        filter.push(getCoeffs.lowpassMZ({
           Fs: params.Fs,
           Fc: params.Fc,
           preGain: params.preGain,
@@ -96,7 +93,6 @@ var calcCoeffs = function calcCoeffs(params, behavior) {
             f = table[params.characteristic].f3dB[params.order - 1][cnt];
           }
         }
-
         if (behavior === 'highpass') {
           fd = params.Fc / f;
         } else {
@@ -122,16 +118,13 @@ var calcCoeffs = function calcCoeffs(params, behavior) {
       filter.push(getCoeffs[behavior](params[cnt]));
     }
   }
-
   return filter;
 };
-
 var initCalcCoeffs = function initCalcCoeffs(behavior) {
   return function (params) {
     return calcCoeffs(params, behavior);
   };
 };
-
 var self = {};
 var CalcCascades = function CalcCascades() {
   var available = [];
@@ -144,7 +137,6 @@ var CalcCascades = function CalcCascades() {
   };
   return self;
 };
-
 module.exports = CalcCascades;
 
 },{"./iirCoeffs":6}],3:[function(require,module,exports){
@@ -157,11 +149,9 @@ var Fft = function Fft(radix) {
     }
     return false;
   };
-
   if (!isPowerOfTwo(radix)) {
     return false;
   }
-
   var fft = {};
   fft.length = radix;
   fft.buffer = new Float64Array(radix);
@@ -169,18 +159,15 @@ var Fft = function Fft(radix) {
   fft.im = new Float64Array(radix);
   fft.reI = new Float64Array(radix);
   fft.imI = new Float64Array(radix);
-
   fft.twiddle = new Int32Array(radix);
   fft.sinTable = new Float64Array(radix - 1);
   fft.cosTable = new Float64Array(radix - 1);
   var TPI = 2 * Math.PI;
   var bits = Math.floor(Math.log(radix) / Math.LN2);
-
-  for (i = fft.sinTable.length; i--;) {
-    fft.sinTable[i] = Math.sin(TPI * (i / radix));
-    fft.cosTable[i] = Math.cos(TPI * (i / radix));
+  for (var _i = fft.sinTable.length; _i--;) {
+    fft.sinTable[_i] = Math.sin(TPI * (_i / radix));
+    fft.cosTable[_i] = Math.cos(TPI * (_i / radix));
   }
-
   var nh = radix >> 1;
   var i = 0;
   var j = 0;
@@ -209,7 +196,6 @@ var Fft = function Fft(radix) {
     return sin(PI * x) / (PI * x);
   };
   var E = Math.E;
-
   var windowCalculation = {
     rectangular: {
       calc: function calc() {
@@ -511,7 +497,6 @@ var Fft = function Fft(radix) {
       correction: 1
     }
   };
-
   var windowFunctions = function windowFunctions(params) {
     if (windowCalculation[params.name].values.length !== params.N) {
       if (params.n === 0) {
@@ -522,11 +507,10 @@ var Fft = function Fft(radix) {
     }
     return windowCalculation[params.name].values;
   };
-
   var self = {
     forward: function forward(b, window) {
-      var i, j, n, k, k2, h, d, c, s, ik, dx, dy;
-      n = fft.buffer.length;
+      var i, j, k, k2, h, d, c, s, ik, dx, dy;
+      var n = fft.buffer.length;
       var winFunction = {
         name: window,
         N: n,
@@ -544,12 +528,10 @@ var Fft = function Fft(radix) {
           fft.buffer[i] = b[i] * w[i];
         }
       }
-
       for (i = n; i--;) {
         fft.re[i] = fft.buffer[fft.twiddle[i]];
         fft.im[i] = 0.0;
       }
-
       for (k = 1; k < n; k = k2) {
         h = 0;
         k2 = k + k;
@@ -575,14 +557,13 @@ var Fft = function Fft(radix) {
       };
     },
     inverse: function inverse(re, im) {
-      var i, j, n, k, k2, h, d, c, s, ik, dx, dy;
-      n = re.length;
+      var i, j, k, k2, h, d, c, s, ik, dx, dy;
+      var n = re.length;
       for (i = n; i--;) {
         j = fft.twiddle[i];
         fft.reI[i] = re[j];
         fft.imI[i] = -im[j];
       }
-
       for (k = 1; k < n; k = k2) {
         h = 0;
         k2 = k + k;
@@ -602,7 +583,6 @@ var Fft = function Fft(radix) {
           h += d;
         }
       }
-
       for (i = n; i--;) {
         fft.buffer[i] = fft.reI[i] / n;
       }
@@ -639,7 +619,6 @@ var Fft = function Fft(radix) {
   };
   return self;
 };
-
 module.exports = Fft;
 
 },{}],4:[function(require,module,exports){
@@ -666,7 +645,6 @@ var FirCoeffs = function FirCoeffs() {
       }
       return s;
     };
-
     if (o / 2 - Math.floor(o / 2) === 0) {
       o++;
     }
@@ -674,9 +652,7 @@ var FirCoeffs = function FirCoeffs() {
     var A = [];
     var beta = 0;
     var cnt = 0;
-    var inoBeta;
     var ret = [];
-
     A[0] = 2 * (Fb - Fa) / Fs;
     for (cnt = 1; cnt <= Np; cnt++) {
       A[cnt] = (Math.sin(2 * cnt * Math.PI * Fb / Fs) - Math.sin(2 * cnt * Math.PI * Fa / Fs)) / (cnt * Math.PI);
@@ -689,8 +665,7 @@ var FirCoeffs = function FirCoeffs() {
     } else {
       beta = 0.5842 * Math.pow(alpha - 21, 0.4) + 0.07886 * (alpha - 21);
     }
-
-    inoBeta = ino(beta);
+    var inoBeta = ino(beta);
     for (cnt = 0; cnt <= Np; cnt++) {
       ret[Np + cnt] = A[cnt] * ino(beta * Math.sqrt(1 - cnt * cnt / (Np * Np))) / inoBeta;
     }
@@ -777,18 +752,16 @@ var FirCoeffs = function FirCoeffs() {
   };
   return self;
 };
-
 module.exports = FirCoeffs;
 
 },{}],5:[function(require,module,exports){
 'use strict';
 
-var _require = require('./utils');
-
-var runMultiFilter = _require.runMultiFilter;
-var runMultiFilterReverse = _require.runMultiFilterReverse;
-var complex = _require.complex;
-var evaluatePhase = _require.evaluatePhase;
+var _require = require('./utils'),
+  runMultiFilter = _require.runMultiFilter,
+  runMultiFilterReverse = _require.runMultiFilterReverse,
+  complex = _require.complex,
+  evaluatePhase = _require.evaluatePhase;
 
 /**
  * Fir filter
@@ -804,7 +777,6 @@ var FirFilter = function FirFilter(filter) {
       im: 0
     };
   }
-
   var initZero = function initZero(cnt) {
     var r = [];
     var i;
@@ -816,9 +788,7 @@ var FirFilter = function FirFilter(filter) {
       pointer: 0
     };
   };
-
   var z = initZero(f.length - 1);
-
   var doStep = function doStep(input, d) {
     d.buf[d.pointer] = input;
     var out = 0;
@@ -828,12 +798,10 @@ var FirFilter = function FirFilter(filter) {
     d.pointer = (d.pointer + 1) % d.buf.length;
     return out;
   };
-
   var calcInputResponse = function calcInputResponse(input) {
     var tempF = initZero(f.length - 1);
     return runMultiFilter(input, tempF, doStep);
   };
-
   var calcResponse = function calcResponse(params) {
     var Fs = params.Fs;
     var Fr = params.Fr;
@@ -859,7 +827,6 @@ var FirFilter = function FirFilter(filter) {
     };
     return res;
   };
-
   var self = {
     responsePoint: function responsePoint(params) {
       return calcResponse(params);
@@ -896,7 +863,6 @@ var FirFilter = function FirFilter(filter) {
   };
   return self;
 };
-
 module.exports = FirFilter;
 
 },{"./utils":9}],6:[function(require,module,exports){
@@ -922,7 +888,6 @@ var IirCoeffs = function IirCoeffs() {
     coeffs.a.push((1 - pre.alpha) / pre.a0);
     return pre;
   };
-
   var preCalcGain = function preCalcGain(params) {
     var Q = params.Q;
     var Fc = params.Fc;
@@ -934,7 +899,6 @@ var IirCoeffs = function IirCoeffs() {
     pre.A = Math.pow(10, params.gain / 40);
     return pre;
   };
-
   var initCoeffs = function initCoeffs() {
     var coeffs = {};
     coeffs.z = [0, 0];
@@ -942,9 +906,7 @@ var IirCoeffs = function IirCoeffs() {
     coeffs.b = [];
     return coeffs;
   };
-
   var self = {
-
     fromPZ: function fromPZ(params) {
       var coeffs = initCoeffs();
       coeffs.a0 = 1;
@@ -960,7 +922,6 @@ var IirCoeffs = function IirCoeffs() {
       }
       return coeffs;
     },
-
     // lowpass matched-z transform: H(s) = 1/(1+a's/w_c+b's^2/w_c)
     lowpassMZ: function lowpassMZ(params) {
       var coeffs = initCoeffs();
@@ -983,7 +944,6 @@ var IirCoeffs = function IirCoeffs() {
       coeffs.b.push(0);
       return coeffs;
     },
-
     // Bessel-Thomson: H(s) = 3/(s^2+3*s+3)
     lowpassBT: function lowpassBT(params) {
       var coeffs = initCoeffs();
@@ -1002,7 +962,6 @@ var IirCoeffs = function IirCoeffs() {
       coeffs.a.push((3 * coeffs.wp2 - 3 * coeffs.wp + 1) / coeffs.a0);
       return coeffs;
     },
-
     highpassBT: function highpassBT(params) {
       var coeffs = initCoeffs();
       params.Q = 1;
@@ -1020,7 +979,6 @@ var IirCoeffs = function IirCoeffs() {
       coeffs.a.push((coeffs.wp2 - coeffs.wp + 3) / coeffs.a0);
       return coeffs;
     },
-
     /*
      * Formulas from http://www.musicdsp.org/files/Audio-EQ-Cookbook.txt
      */
@@ -1042,7 +1000,6 @@ var IirCoeffs = function IirCoeffs() {
       coeffs.b.push(coeffs.b[0]);
       return coeffs;
     },
-
     // H(s) = s^2 / (s^2 + s/Q + 1)
     highpass: function highpass(params) {
       var coeffs = initCoeffs();
@@ -1061,7 +1018,6 @@ var IirCoeffs = function IirCoeffs() {
       coeffs.b.push(coeffs.b[0]);
       return coeffs;
     },
-
     // H(s) = (s^2 - s/Q + 1) / (s^2 + s/Q + 1)
     allpass: function allpass(params) {
       var coeffs = initCoeffs();
@@ -1075,7 +1031,6 @@ var IirCoeffs = function IirCoeffs() {
       coeffs.b.push((1 + p.alpha) / p.a0);
       return coeffs;
     },
-
     // H(s) = s / (s^2 + s/Q + 1)
     bandpassQ: function bandpassQ(params) {
       var coeffs = initCoeffs();
@@ -1086,7 +1041,6 @@ var IirCoeffs = function IirCoeffs() {
       coeffs.b.push(-coeffs.b[0]);
       return coeffs;
     },
-
     // H(s) = (s/Q) / (s^2 + s/Q + 1)
     bandpass: function bandpass(params) {
       var coeffs = initCoeffs();
@@ -1097,7 +1051,6 @@ var IirCoeffs = function IirCoeffs() {
       coeffs.b.push(-coeffs.b[0]);
       return coeffs;
     },
-
     // H(s) = (s^2 + 1) / (s^2 + s/Q + 1)
     bandstop: function bandstop(params) {
       var coeffs = initCoeffs();
@@ -1108,7 +1061,6 @@ var IirCoeffs = function IirCoeffs() {
       coeffs.b.push(coeffs.b[0]);
       return coeffs;
     },
-
     // H(s) = (s^2 + s*(A/Q) + 1) / (s^2 + s/(A*Q) + 1)
     peak: function peak(params) {
       var coeffs = initCoeffs();
@@ -1122,7 +1074,6 @@ var IirCoeffs = function IirCoeffs() {
       coeffs.b.push((1 - p.alpha * p.A) / coeffs.a0);
       return coeffs;
     },
-
     // H(s) = A * (s^2 + (sqrt(A)/Q)*s + A)/(A*s^2 + (sqrt(A)/Q)*s + 1)
     lowshelf: function lowshelf(params) {
       var coeffs = initCoeffs();
@@ -1140,7 +1091,6 @@ var IirCoeffs = function IirCoeffs() {
       coeffs.b.push(p.A * (p.A + 1 - (p.A - 1) * p.cw - sa) / coeffs.a0);
       return coeffs;
     },
-
     // H(s) = A * (A*s^2 + (sqrt(A)/Q)*s + 1)/(s^2 + (sqrt(A)/Q)*s + A)
     highshelf: function highshelf(params) {
       var coeffs = initCoeffs();
@@ -1158,7 +1108,6 @@ var IirCoeffs = function IirCoeffs() {
       coeffs.b.push(p.A * (p.A + 1 + (p.A - 1) * p.cw - sa) / coeffs.a0);
       return coeffs;
     },
-
     // taken from: Design of digital filters for frequency weightings (A and C) required for risk assessments of workers exposed to noise
     // use Butterworth one stage IIR filter to get the results from the paper
     aweighting: function aweighting(params) {
@@ -1177,21 +1126,18 @@ var IirCoeffs = function IirCoeffs() {
       return coeffs;
     }
   };
-
   return self;
 };
-
 module.exports = IirCoeffs;
 
 },{}],7:[function(require,module,exports){
 'use strict';
 
-var _require = require('./utils');
-
-var complex = _require.complex;
-var runMultiFilter = _require.runMultiFilter;
-var runMultiFilterReverse = _require.runMultiFilterReverse;
-var evaluatePhase = _require.evaluatePhase;
+var _require = require('./utils'),
+  complex = _require.complex,
+  runMultiFilter = _require.runMultiFilter,
+  runMultiFilterReverse = _require.runMultiFilterReverse,
+  evaluatePhase = _require.evaluatePhase;
 
 // params: array of biquad coefficient objects and z registers
 // stage structure e.g. {k:1, a:[1.1, -1.2], b:[0.3, -1.2, -0.4], z:[0, 0]}
@@ -1237,7 +1183,6 @@ var IirFilter = function IirFilter(filter) {
     cc[cnt].a1 = s.a[0];
     cc[cnt].a2 = s.a[1];
   }
-
   var runStage = function runStage(s, input) {
     var temp = input * s.k.re - s.a1.re * s.z[0] - s.a2.re * s.z[1];
     var out = s.b0.re * temp + s.b1.re * s.z[0] + s.b2.re * s.z[1];
@@ -1245,7 +1190,6 @@ var IirFilter = function IirFilter(filter) {
     s.z[0] = temp;
     return out;
   };
-
   var doStep = function doStep(input, coeffs) {
     var out = input;
     var cnt = 0;
@@ -1254,7 +1198,6 @@ var IirFilter = function IirFilter(filter) {
     }
     return out;
   };
-
   var biquadResponse = function biquadResponse(params, s) {
     var Fs = params.Fs;
     var Fr = params.Fr;
@@ -1276,7 +1219,6 @@ var IirFilter = function IirFilter(filter) {
     };
     return res;
   };
-
   var calcResponse = function calcResponse(params) {
     var cnt = 0;
     var res = {
@@ -1294,33 +1236,33 @@ var IirFilter = function IirFilter(filter) {
     res.dBmagnitude = 20 * Math.log(res.magnitude) * Math.LOG10E;
     return res;
   };
-
   var reinit = function reinit() {
     var tempF = [];
-    for (var cnt = 0; cnt < f.length; cnt++) {
-      tempF[cnt] = {
+    for (var _cnt = 0; _cnt < f.length; _cnt++) {
+      var _s = f[_cnt];
+      tempF[_cnt] = {
         b0: {
-          re: s.b[0],
+          re: _s.b[0],
           im: 0
         },
         b1: {
-          re: s.b[1],
+          re: _s.b[1],
           im: 0
         },
         b2: {
-          re: s.b[2],
+          re: _s.b[2],
           im: 0
         },
         a1: {
-          re: s.a[0],
+          re: _s.a[0],
           im: 0
         },
         a2: {
-          re: s.a[1],
+          re: _s.a[1],
           im: 0
         },
         k: {
-          re: s.k,
+          re: _s.k,
           im: 0
         },
         z: [0, 0]
@@ -1328,12 +1270,10 @@ var IirFilter = function IirFilter(filter) {
     }
     return tempF;
   };
-
   var calcInputResponse = function calcInputResponse(input) {
     var tempF = reinit();
     return runMultiFilter(input, tempF, doStep);
   };
-
   var predefinedResponse = function predefinedResponse(def, length) {
     var ret = {};
     var input = [];
@@ -1363,7 +1303,6 @@ var IirFilter = function IirFilter(filter) {
     }
     return ret;
   };
-
   var getComplRes = function getComplRes(n1, n2) {
     var innerSqrt = Math.pow(n1 / 2, 2) - n2;
     if (innerSqrt < 0) {
@@ -1384,17 +1323,15 @@ var IirFilter = function IirFilter(filter) {
       }];
     }
   };
-
   var getPZ = function getPZ() {
     var res = [];
-    for (var cnt = 0; cnt < cc.length; cnt++) {
-      res[cnt] = {};
-      res[cnt].z = getComplRes(cc[cnt].b1, cc[cnt].b2);
-      res[cnt].p = getComplRes(cc[cnt].a1, cc[cnt].a2);
+    for (var _cnt2 = 0; _cnt2 < cc.length; _cnt2++) {
+      res[_cnt2] = {};
+      res[_cnt2].z = getComplRes(cc[_cnt2].b1, cc[_cnt2].b2);
+      res[_cnt2].p = getComplRes(cc[_cnt2].a1, cc[_cnt2].a2);
     }
     return res;
   };
-
   var self = {
     singleStep: function singleStep(input) {
       return doStep(input, cf);
@@ -1443,14 +1380,13 @@ var IirFilter = function IirFilter(filter) {
       return getPZ();
     },
     reinit: function reinit() {
-      for (cnt = 0; cnt < cf.length; cnt++) {
-        cf[cnt].z = [0, 0];
+      for (var _cnt3 = 0; _cnt3 < cf.length; _cnt3++) {
+        cf[_cnt3].z = [0, 0];
       }
     }
   };
   return self;
 };
-
 module.exports = IirFilter;
 
 },{"./utils":9}],8:[function(require,module,exports){
@@ -1461,16 +1397,13 @@ module.exports = IirFilter;
  */
 var TestFilter = function TestFilter(filter) {
   var f = filter;
-
   var simData = [];
   var cnt;
-
   var randomValues = function randomValues(params) {
     for (cnt = 0; cnt < params.steps; cnt++) {
       simData.push(f.singleStep((Math.random() - 0.5) * params.pp + params.offset));
     }
   };
-
   var stepValues = function stepValues(params) {
     var max = params.offset + params.pp;
     var min = params.offset - params.pp;
@@ -1482,7 +1415,6 @@ var TestFilter = function TestFilter(filter) {
       }
     }
   };
-
   var impulseValues = function impulseValues(params) {
     var max = params.offset + params.pp;
     var min = params.offset - params.pp;
@@ -1494,7 +1426,6 @@ var TestFilter = function TestFilter(filter) {
       }
     }
   };
-
   var rampValues = function rampValues(params) {
     var max = params.offset + params.pp;
     var min = params.offset - params.pp;
@@ -1509,7 +1440,6 @@ var TestFilter = function TestFilter(filter) {
       simData.push(f.singleStep(val));
     }
   };
-
   var self = {
     randomStability: function randomStability(params) {
       f.reinit();
@@ -1550,7 +1480,6 @@ var TestFilter = function TestFilter(filter) {
   };
   return self;
 };
-
 module.exports = TestFilter;
 
 },{}],9:[function(require,module,exports){
@@ -1587,7 +1516,6 @@ exports.evaluatePhase = function (res) {
     } else {
       res[cnt].unwrappedPhase = phase[cnt];
     }
-
     res[cnt].phaseDelay = res[cnt].unwrappedPhase / (cnt / res.length);
     res[cnt].groupDelay = (res[cnt].unwrappedPhase - res[cnt - 1].unwrappedPhase) / (pi / res.length);
     if (res[cnt].groupDelay < 0) {
@@ -1619,7 +1547,6 @@ exports.runMultiFilter = function (input, d, doStep, overwrite) {
   }
   return out;
 };
-
 exports.runMultiFilterReverse = function (input, d, doStep, overwrite) {
   var out = [];
   if (overwrite) {
@@ -1631,29 +1558,17 @@ exports.runMultiFilterReverse = function (input, d, doStep, overwrite) {
   }
   return out;
 };
-
-var factorial = function factorial(_x, _x2) {
-  var _again = true;
-
-  _function: while (_again) {
-    var n = _x,
-        a = _x2;
-    _again = false;
-
-    if (!a) {
-      a = 1;
-    }
-    if (n !== Math.floor(n) || a !== Math.floor(a)) {
-      return 1;
-    }
-    if (n === 0 || n === 1) {
-      return a;
-    } else {
-      _x = n - 1;
-      _x2 = a * n;
-      _again = true;
-      continue _function;
-    }
+var _factorial = function factorial(n, a) {
+  if (!a) {
+    a = 1;
+  }
+  if (n !== Math.floor(n) || a !== Math.floor(a)) {
+    return 1;
+  }
+  if (n === 0 || n === 1) {
+    return a;
+  } else {
+    return _factorial(n - 1, a * n);
   }
 };
 
@@ -1663,13 +1578,12 @@ var factorial = function factorial(_x, _x2) {
 exports.besselFactors = function (n) {
   var res = [];
   for (var k = 0; k < n + 1; k++) {
-    var p = factorial(2 * n - k);
-    var q = Math.pow(2, n - k) * factorial(k) * factorial(n - k);
+    var p = _factorial(2 * n - k);
+    var q = Math.pow(2, n - k) * _factorial(k) * _factorial(n - k);
     res.unshift(Math.floor(p / q));
   }
   return res;
 };
-
 var fractionToFp = function fractionToFp(fraction, fractionBits) {
   var fpFraction = 0;
   for (var cnt = 0; cnt < fractionBits; cnt++) {
@@ -1681,11 +1595,9 @@ var fractionToFp = function fractionToFp(fraction, fractionBits) {
   }
   return fpFraction;
 };
-
 var numberToFp = function numberToFp(number, numberBits) {
   return number & Math.pow(2, numberBits);
 };
-
 var valueToFp = function valueToFp(value, numberBits, fractionBits) {
   var number = Math.abs(value);
   var fraction = value - number;
@@ -1697,7 +1609,6 @@ var valueToFp = function valueToFp(value, numberBits, fractionBits) {
   };
   return fpNumber;
 };
-
 exports.fixedPoint = {
   convert: function convert(value, numberBits, fractionBits) {
     return valueToFp(value, numberBits, fractionBits);
@@ -1712,7 +1623,6 @@ exports.fixedPoint = {
  * Complex
  */
 exports.complex = {
-
   div: function div(p, q) {
     var a = p.re;
     var b = p.im;

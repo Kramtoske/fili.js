@@ -2,6 +2,13 @@ language: node_js
 sudo: false
 
 node_js:
-  - "4"
-  - "6"
-  - "0.12"
+  - "20"
+  - "18"
+
+jobs:
+  include:
+    - stage: sbom
+      node_js: "20"
+      script:
+        - npm install
+        - npm run sbom

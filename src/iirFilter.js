@@ -1,6 +1,6 @@
 'use strict'
 
-var {
+const {
   complex,
   runMultiFilter,
   runMultiFilterReverse,
@@ -9,17 +9,17 @@ var {
 
 // params: array of biquad coefficient objects and z registers
 // stage structure e.g. {k:1, a:[1.1, -1.2], b:[0.3, -1.2, -0.4], z:[0, 0]}
-var IirFilter = function (filter) {
-  var f = filter
-  var cone = {
+const IirFilter = function (filter) {
+  const f = filter
+  const cone = {
     re: 1,
     im: 0
   }
-  var cf = []
-  var cc = []
-  for (var cnt = 0; cnt < f.length; cnt++) {
+  const cf = []
+  const cc = []
+  for (let cnt = 0; cnt < f.length; cnt++) {
     cf[cnt] = {}
-    var s = f[cnt]
+    const s = f[cnt]
     cf[cnt].b0 = {
       re: s.b[0],
       im: 0
@@ -52,53 +52,53 @@ var IirFilter = function (filter) {
     cc[cnt].a2 = s.a[1]
   }
 
-  var runStage = function (s, input) {
-    var temp = input * s.k.re - s.a1.re * s.z[0] - s.a2.re * s.z[1]
-    var out = s.b0.re * temp + s.b1.re * s.z[0] + s.b2.re * s.z[1]
+  const runStage = function (s, input) {
+    const temp = input * s.k.re - s.a1.re * s.z[0] - s.a2.re * s.z[1]
+    const out = s.b0.re * temp + s.b1.re * s.z[0] + s.b2.re * s.z[1]
     s.z[1] = s.z[0]
     s.z[0] = temp
     return out
   }
 
-  var doStep = function (input, coeffs) {
-    var out = input
-    var cnt = 0
+  const doStep = function (input, coeffs) {
+    let out = input
+    let cnt = 0
     for (cnt = 0; cnt < coeffs.length; cnt++) {
       out = runStage(coeffs[cnt], out)
     }
     return out
   }
 
-  var biquadResponse = function (params, s) {
-    var Fs = params.Fs
-    var Fr = params.Fr
+  const biquadResponse = function (params, s) {
+    const Fs = params.Fs
+    const Fr = params.Fr
     // z = exp(j*omega*pi) = cos(omega*pi) + j*sin(omega*pi)
     // z^-1 = exp(-j*omega*pi)
     // omega is between 0 and 1. 1 is the Nyquist frequency.
-    var theta = -Math.PI * (Fr / Fs) * 2
-    var z = {
+    const theta = -Math.PI * (Fr / Fs) * 2
+    const z = {
       re: Math.cos(theta),
       im: Math.sin(theta)
     }
     // k * (b0 + b1*z^-1 + b2*z^-2) / (1 + a1*z^⁻1 + a2*z^-2)
-    var p = complex.mul(s.k, complex.add(s.b0, complex.mul(z, complex.add(s.b1, complex.mul(s.b2, z)))))
-    var q = complex.add(cone, complex.mul(z, complex.add(s.a1, complex.mul(s.a2, z))))
-    var h = complex.div(p, q)
-    var res = {
+    const p = complex.mul(s.k, complex.add(s.b0, complex.mul(z, complex.add(s.b1, complex.mul(s.b2, z)))))
+    const q = complex.add(cone, complex.mul(z, complex.add(s.a1, complex.mul(s.a2, z))))
+    const h = complex.div(p, q)
+    const res = {
       magnitude: complex.magnitude(h),
       phase: complex.phase(h)
     }
     return res
   }
 
-  var calcResponse = function (params) {
-    var cnt = 0
-    var res = {
+  const calcResponse = function (params) {
+    let cnt = 0
+    const res = {
       magnitude: 1,
       phase: 0
     }
     for (cnt = 0; cnt < cf.length; cnt++) {
-      var r = biquadResponse(params, cf[cnt])
+      const r = biquadResponse(params, cf[cnt])
       // a cascade of biquads results in the multiplication of H(z)
       // H_casc(z) = H_0(z) * H_1(z) * ... * H_n(z)
       res.magnitude *= r.magnitude
@@ -109,9 +109,10 @@ var IirFilter = function (filter) {
     return res
   }
 
-  var reinit = function () {
-    var tempF = []
-    for (var cnt = 0; cnt < f.length; cnt++) {
+  const reinit = function () {
+    const tempF = []
+    for (let cnt = 0; cnt < f.length; cnt++) {
+      const s = f[cnt]
       tempF[cnt] = {
         b0: {
           re: s.b[0],
@@ -143,21 +144,21 @@ var IirFilter = function (filter) {
     return tempF
   }
 
-  var calcInputResponse = function (input) {
-    var tempF = reinit()
+  const calcInputResponse = function (input) {
+    const tempF = reinit()
     return runMultiFilter(input, tempF, doStep)
   }
 
-  var predefinedResponse = function (def, length) {
-    var ret = {}
-    var input = []
-    var cnt = 0
+  const predefinedResponse = function (def, length) {
+    const ret = {}
+    const input = []
+    let cnt = 0
     for (cnt = 0; cnt < length; cnt++) {
       input.push(def(cnt))
     }
     ret.out = calcInputResponse(input)
-    var maxFound = false
-    var minFound = false
+    let maxFound = false
+    let minFound = false
     for (cnt = 0; cnt < length - 1; cnt++) {
       if (ret.out[cnt] > ret.out[cnt + 1] && !maxFound) {
         maxFound = true
@@ -178,8 +179,8 @@ var IirFilter = function (filter) {
     return ret
   }
 
-  var getComplRes = function (n1, n2) {
-    var innerSqrt = Math.pow(n1 / 2, 2) - n2
+  const getComplRes = function (n1, n2) {
+    const innerSqrt = Math.pow(n1 / 2, 2) - n2
     if (innerSqrt < 0) {
       return [{
         re: -n1 / 2,
@@ -199,9 +200,9 @@ var IirFilter = function (filter) {
     }
   }
 
-  var getPZ = function () {
-    var res = []
-    for (var cnt = 0; cnt < cc.length; cnt++) {
+  const getPZ = function () {
+    const res = []
+    for (let cnt = 0; cnt < cc.length; cnt++) {
       res[cnt] = {}
       res[cnt].z = getComplRes(cc[cnt].b1, cc[cnt].b2)
       res[cnt].p = getComplRes(cc[cnt].a1, cc[cnt].a2)
@@ -209,7 +210,7 @@ var IirFilter = function (filter) {
     return res
   }
 
-  var self = {
+  const self = {
     singleStep: function (input) {
       return doStep(input, cf)
     },
@@ -218,7 +219,7 @@ var IirFilter = function (filter) {
     },
     filtfilt: function (input, overwrite) {
       return runMultiFilterReverse(runMultiFilter(
-          input, cf, doStep, overwrite), cf, doStep, true)
+        input, cf, doStep, overwrite), cf, doStep, true)
     },
     simulate: function (input) {
       return calcInputResponse(input)
@@ -242,9 +243,9 @@ var IirFilter = function (filter) {
     },
     response: function (resolution) {
       resolution = resolution || 100
-      var res = []
-      var cnt = 0
-      var r = resolution * 2
+      const res = []
+      let cnt = 0
+      const r = resolution * 2
       for (cnt = 0; cnt < resolution; cnt++) {
         res[cnt] = calcResponse({
           Fs: r,
@@ -258,7 +259,7 @@ var IirFilter = function (filter) {
       return getPZ()
     },
     reinit: function () {
-      for (cnt = 0; cnt < cf.length; cnt++) {
+      for (let cnt = 0; cnt < cf.length; cnt++) {
         cf[cnt].z = [0, 0]
       }
     }

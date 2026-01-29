@@ -3,13 +3,13 @@
 'use strict'
 
 /* eslint-disable no-unused-vars */
-var should = require('should')
+const should = require('should')
 /* eslint-enable no-unused-vars */
-var CalcCascades = require('../src/calcCascades')
-var IirFilter = require('../src/iirFilter')
+const CalcCascades = require('../src/calcCascades')
+const IirFilter = require('../src/iirFilter')
 
 describe('iir.js', function () {
-  var iirCascadeCalculator
+  let iirCascadeCalculator
 
   before(function () {
     iirCascadeCalculator = new CalcCascades()
@@ -17,7 +17,7 @@ describe('iir.js', function () {
 
   after(function () {})
   describe('iir-bessel-bandstop', function () {
-    var filterCoeffs, filter
+    let filterCoeffs, filter
     it('can calculate coeffs', function () {
       filterCoeffs = iirCascadeCalculator.bandstop({
         order: 3,
@@ -40,35 +40,35 @@ describe('iir.js', function () {
     })
 
     it('can do a single step', function () {
-      var out = filter.singleStep(10)
+      const out = filter.singleStep(10)
       out.should.be.a.Number
       out.should.not.equal(0)
     })
 
     it('can do multiple steps', function () {
-      var simInput = []
-      for (var i = 0; i < 10000; i++) {
+      const simInput = []
+      for (let i = 0; i < 10000; i++) {
         simInput.push(i % 10 - 5)
       }
-      var out = filter.multiStep(simInput)
+      const out = filter.multiStep(simInput)
       out.should.be.an.Array
       out.length.should.equal(10000)
       out[111].should.not.equal(simInput[111])
     })
 
     it('can simulate multiple steps', function () {
-      var simInput = []
-      for (var i = 0; i < 10000; i++) {
+      const simInput = []
+      for (let i = 0; i < 10000; i++) {
         simInput.push(i % 10 - 5)
       }
-      var out = filter.simulate(simInput)
+      const out = filter.simulate(simInput)
       out.should.be.an.Array
       out.length.should.equal(10000)
       out[111].should.not.equal(simInput[111])
     })
 
     it('calculates impulse response', function () {
-      var r = filter.impulseResponse(100)
+      const r = filter.impulseResponse(100)
       r.should.be.an.Object
       r.out.should.be.an.Array
       r.out.length.should.equal(100)
@@ -81,7 +81,7 @@ describe('iir.js', function () {
     })
 
     it('calculates step response', function () {
-      var r = filter.stepResponse(100)
+      const r = filter.stepResponse(100)
       r.should.be.an.Object
       r.out.should.be.an.Array
       r.out.length.should.equal(100)
@@ -94,7 +94,7 @@ describe('iir.js', function () {
     })
 
     it('calculates filter response', function () {
-      var r = filter.response(200)
+      let r = filter.response(200)
       r.should.be.an.Array
       r.length.should.equal(200)
       r[20].should.be.an.Object
@@ -118,7 +118,7 @@ describe('iir.js', function () {
     })
 
     it('calculates single filter response', function () {
-      var r = filter.responsePoint({
+      const r = filter.responsePoint({
         Fs: 4000,
         Fr: 211
       })
@@ -138,7 +138,7 @@ describe('iir.js', function () {
   })
 
   describe('iir-bessel-lp', function () {
-    var filterCoeffs, filter
+    let filterCoeffs, filter
     it('can calculate coeffs', function () {
       filterCoeffs = iirCascadeCalculator.lowpass({
         order: 3,
@@ -177,35 +177,35 @@ describe('iir.js', function () {
     })
 
     it('can do a single step', function () {
-      var out = filter.singleStep(10)
+      const out = filter.singleStep(10)
       out.should.be.a.Number
       out.should.not.equal(0)
     })
 
     it('can do multiple steps', function () {
-      var simInput = []
-      for (var i = 0; i < 10000; i++) {
+      const simInput = []
+      for (let i = 0; i < 10000; i++) {
         simInput.push(i % 10 - 5)
       }
-      var out = filter.multiStep(simInput)
+      const out = filter.multiStep(simInput)
       out.should.be.an.Array
       out.length.should.equal(10000)
       out[111].should.not.equal(simInput[111])
     })
 
     it('can simulate multiple steps', function () {
-      var simInput = []
-      for (var i = 0; i < 10000; i++) {
+      const simInput = []
+      for (let i = 0; i < 10000; i++) {
         simInput.push(i % 10 - 5)
       }
-      var out = filter.simulate(simInput)
+      const out = filter.simulate(simInput)
       out.should.be.an.Array
       out.length.should.equal(10000)
       out[111].should.not.equal(simInput[111])
     })
 
     it('calculates impulse response', function () {
-      var r = filter.impulseResponse(100)
+      const r = filter.impulseResponse(100)
       r.should.be.an.Object
       r.out.should.be.an.Array
       r.out.length.should.equal(100)
@@ -218,7 +218,7 @@ describe('iir.js', function () {
     })
 
     it('calculates step response', function () {
-      var r = filter.stepResponse(100)
+      const r = filter.stepResponse(100)
       r.should.be.an.Object
       r.out.should.be.an.Array
       r.out.length.should.equal(100)
@@ -231,7 +231,7 @@ describe('iir.js', function () {
     })
 
     it('calculates filter response', function () {
-      var r = filter.response(200)
+      let r = filter.response(200)
       r.should.be.an.Array
       r.length.should.equal(200)
       r[20].should.be.an.Object
@@ -255,7 +255,7 @@ describe('iir.js', function () {
     })
 
     it('calculates single filter response', function () {
-      var r = filter.responsePoint({
+      const r = filter.responsePoint({
         Fs: 4000,
         Fr: 211
       })
@@ -275,7 +275,7 @@ describe('iir.js', function () {
   })
 
   describe('iir-bessel-hp', function () {
-    var filterCoeffs, filter
+    let filterCoeffs, filter
     it('can calculate coeffs', function () {
       filterCoeffs = iirCascadeCalculator.highpass({
         order: 2,
@@ -314,35 +314,35 @@ describe('iir.js', function () {
     })
 
     it('can do a single step', function () {
-      var out = filter.singleStep(10)
+      const out = filter.singleStep(10)
       out.should.be.a.Number
       out.should.not.equal(0)
     })
 
     it('can do multiple steps', function () {
-      var simInput = []
-      for (var i = 0; i < 10000; i++) {
+      const simInput = []
+      for (let i = 0; i < 10000; i++) {
         simInput.push(i % 10 - 5)
       }
-      var out = filter.multiStep(simInput)
+      const out = filter.multiStep(simInput)
       out.should.be.an.Array
       out.length.should.equal(10000)
       out[111].should.not.equal(simInput[111])
     })
 
     it('can simulate multiple steps', function () {
-      var simInput = []
-      for (var i = 0; i < 10000; i++) {
+      const simInput = []
+      for (let i = 0; i < 10000; i++) {
         simInput.push(i % 10 - 5)
       }
-      var out = filter.simulate(simInput)
+      const out = filter.simulate(simInput)
       out.should.be.an.Array
       out.length.should.equal(10000)
       out[111].should.not.equal(simInput[111])
     })
 
     it('calculates impulse response', function () {
-      var r = filter.impulseResponse(100)
+      const r = filter.impulseResponse(100)
       r.should.be.an.Object
       r.out.should.be.an.Array
       r.out.length.should.equal(100)
@@ -355,7 +355,7 @@ describe('iir.js', function () {
     })
 
     it('calculates step response', function () {
-      var r = filter.stepResponse(100)
+      const r = filter.stepResponse(100)
       r.should.be.an.Object
       r.out.should.be.an.Array
       r.out.length.should.equal(100)
@@ -368,7 +368,7 @@ describe('iir.js', function () {
     })
 
     it('calculates filter response', function () {
-      var r = filter.response(200)
+      let r = filter.response(200)
       r.should.be.an.Array
       r.length.should.equal(200)
       r[20].should.be.an.Object
@@ -392,7 +392,7 @@ describe('iir.js', function () {
     })
 
     it('calculates single filter response', function () {
-      var r = filter.responsePoint({
+      const r = filter.responsePoint({
         Fs: 4000,
         Fr: 211
       })
@@ -412,7 +412,7 @@ describe('iir.js', function () {
   })
 
   describe('iir-butterworth-hp', function () {
-    var filterCoeffs, filter
+    let filterCoeffs, filter
     it('can calculate coeffs', function () {
       filterCoeffs = iirCascadeCalculator.highpass({
         order: 3,
@@ -451,35 +451,35 @@ describe('iir.js', function () {
     })
 
     it('can do a single step', function () {
-      var out = filter.singleStep(10)
+      const out = filter.singleStep(10)
       out.should.be.a.Number
       out.should.not.equal(0)
     })
 
     it('can do multiple steps', function () {
-      var simInput = []
-      for (var i = 0; i < 10000; i++) {
+      const simInput = []
+      for (let i = 0; i < 10000; i++) {
         simInput.push(i % 10 - 5)
       }
-      var out = filter.multiStep(simInput)
+      const out = filter.multiStep(simInput)
       out.should.be.an.Array
       out.length.should.equal(10000)
       out[111].should.not.equal(simInput[111])
     })
 
     it('can simulate multiple steps', function () {
-      var simInput = []
-      for (var i = 0; i < 10000; i++) {
+      const simInput = []
+      for (let i = 0; i < 10000; i++) {
         simInput.push(i % 10 - 5)
       }
-      var out = filter.simulate(simInput)
+      const out = filter.simulate(simInput)
       out.should.be.an.Array
       out.length.should.equal(10000)
       out[111].should.not.equal(simInput[111])
     })
 
     it('calculates impulse response', function () {
-      var r = filter.impulseResponse(100)
+      const r = filter.impulseResponse(100)
       r.should.be.an.Object
       r.out.should.be.an.Array
       r.out.length.should.equal(100)
@@ -492,7 +492,7 @@ describe('iir.js', function () {
     })
 
     it('calculates step response', function () {
-      var r = filter.stepResponse(100)
+      const r = filter.stepResponse(100)
       r.should.be.an.Object
       r.out.should.be.an.Array
       r.out.length.should.equal(100)
@@ -505,7 +505,7 @@ describe('iir.js', function () {
     })
 
     it('calculates filter response', function () {
-      var r = filter.response(200)
+      let r = filter.response(200)
       r.should.be.an.Array
       r.length.should.equal(200)
       r[20].should.be.an.Object
@@ -529,7 +529,7 @@ describe('iir.js', function () {
     })
 
     it('calculates single filter response', function () {
-      var r = filter.responsePoint({
+      const r = filter.responsePoint({
         Fs: 4000,
         Fr: 211
       })
@@ -549,7 +549,7 @@ describe('iir.js', function () {
   })
 
   describe('iir-butterworth-lp', function () {
-    var filterCoeffs, filter
+    let filterCoeffs, filter
     it('can calculate coeffs', function () {
       filterCoeffs = iirCascadeCalculator.lowpass({
         order: 2,
@@ -588,35 +588,35 @@ describe('iir.js', function () {
     })
 
     it('can do a single step', function () {
-      var out = filter.singleStep(10)
+      const out = filter.singleStep(10)
       out.should.be.a.Number
       out.should.not.equal(0)
     })
 
     it('can do multiple steps', function () {
-      var simInput = []
-      for (var i = 0; i < 10000; i++) {
+      const simInput = []
+      for (let i = 0; i < 10000; i++) {
         simInput.push(i % 10 - 5)
       }
-      var out = filter.multiStep(simInput)
+      const out = filter.multiStep(simInput)
       out.should.be.an.Array
       out.length.should.equal(10000)
       out[111].should.not.equal(simInput[111])
     })
 
     it('can simulate multiple steps', function () {
-      var simInput = []
-      for (var i = 0; i < 10000; i++) {
+      const simInput = []
+      for (let i = 0; i < 10000; i++) {
         simInput.push(i % 10 - 5)
       }
-      var out = filter.simulate(simInput)
+      const out = filter.simulate(simInput)
       out.should.be.an.Array
       out.length.should.equal(10000)
       out[111].should.not.equal(simInput[111])
     })
 
     it('calculates impulse response', function () {
-      var r = filter.impulseResponse(100)
+      const r = filter.impulseResponse(100)
       r.should.be.an.Object
       r.out.should.be.an.Array
       r.out.length.should.equal(100)
@@ -629,7 +629,7 @@ describe('iir.js', function () {
     })
 
     it('calculates step response', function () {
-      var r = filter.stepResponse(100)
+      const r = filter.stepResponse(100)
       r.should.be.an.Object
       r.out.should.be.an.Array
       r.out.length.should.equal(100)
@@ -642,7 +642,7 @@ describe('iir.js', function () {
     })
 
     it('calculates filter response', function () {
-      var r = filter.response(200)
+      let r = filter.response(200)
       r.should.be.an.Array
       r.length.should.equal(200)
       r[20].should.be.an.Object
@@ -666,7 +666,7 @@ describe('iir.js', function () {
     })
 
     it('calculates single filter response', function () {
-      var r = filter.responsePoint({
+      const r = filter.responsePoint({
         Fs: 4000,
         Fr: 211
       })
@@ -686,7 +686,7 @@ describe('iir.js', function () {
   })
 
   describe('iir-butterworth-bandstop', function () {
-    var filterCoeffs, filter
+    let filterCoeffs, filter
     it('can calculate coeffs', function () {
       filterCoeffs = iirCascadeCalculator.bandstop({
         order: 3,
@@ -709,35 +709,35 @@ describe('iir.js', function () {
     })
 
     it('can do a single step', function () {
-      var out = filter.singleStep(10)
+      const out = filter.singleStep(10)
       out.should.be.a.Number
       out.should.not.equal(0)
     })
 
     it('can do multiple steps', function () {
-      var simInput = []
-      for (var i = 0; i < 10000; i++) {
+      const simInput = []
+      for (let i = 0; i < 10000; i++) {
         simInput.push(i % 10 - 5)
       }
-      var out = filter.multiStep(simInput)
+      const out = filter.multiStep(simInput)
       out.should.be.an.Array
       out.length.should.equal(10000)
       out[111].should.not.equal(simInput[111])
     })
 
     it('can simulate multiple steps', function () {
-      var simInput = []
-      for (var i = 0; i < 10000; i++) {
+      const simInput = []
+      for (let i = 0; i < 10000; i++) {
         simInput.push(i % 10 - 5)
       }
-      var out = filter.simulate(simInput)
+      const out = filter.simulate(simInput)
       out.should.be.an.Array
       out.length.should.equal(10000)
       out[111].should.not.equal(simInput[111])
     })
 
     it('calculates impulse response', function () {
-      var r = filter.impulseResponse(100)
+      const r = filter.impulseResponse(100)
       r.should.be.an.Object
       r.out.should.be.an.Array
       r.out.length.should.equal(100)
@@ -750,7 +750,7 @@ describe('iir.js', function () {
     })
 
     it('calculates step response', function () {
-      var r = filter.stepResponse(100)
+      const r = filter.stepResponse(100)
       r.should.be.an.Object
       r.out.should.be.an.Array
       r.out.length.should.equal(100)
@@ -763,7 +763,7 @@ describe('iir.js', function () {
     })
 
     it('calculates filter response', function () {
-      var r = filter.response(200)
+      let r = filter.response(200)
       r.should.be.an.Array
       r.length.should.equal(200)
       r[20].should.be.an.Object
@@ -787,7 +787,7 @@ describe('iir.js', function () {
     })
 
     it('calculates single filter response', function () {
-      var r = filter.responsePoint({
+      const r = filter.responsePoint({
         Fs: 4000,
         Fr: 211
       })
@@ -807,7 +807,7 @@ describe('iir.js', function () {
   })
 
   describe('iir-more-filters', function () {
-    var filterCoeffs
+    let filterCoeffs
     it('can calculate lowpass Bessel matched-Z', function () {
       filterCoeffs = iirCascadeCalculator.lowpass({
         order: 3,
@@ -1081,7 +1081,7 @@ describe('iir.js', function () {
 
   describe('iir-helpers', function () {
     it('can get available filters', function () {
-      var av = iirCascadeCalculator.available()
+      const av = iirCascadeCalculator.available()
       av.length.should.not.equal(0)
       av[1].should.be.a.String
     })

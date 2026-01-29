@@ -1,12 +1,12 @@
 'use strict'
 
-var IirCoeffs = function () {
-  var preCalc = function (params, coeffs) {
-    var Q = params.Q
-    var Fc = params.Fc
-    var Fs = params.Fs
-    var pre = {}
-    var w = 2 * Math.PI * Fc / Fs
+const IirCoeffs = function () {
+  const preCalc = function (params, coeffs) {
+    const Q = params.Q
+    const Fc = params.Fc
+    const Fs = params.Fs
+    const pre = {}
+    const w = 2 * Math.PI * Fc / Fs
     if (params.BW) {
       pre.alpha = Math.sin(w) * Math.sinh(Math.log(2) / 2 * params.BW * w / Math.sin(w))
     } else {
@@ -21,30 +21,30 @@ var IirCoeffs = function () {
     return pre
   }
 
-  var preCalcGain = function (params) {
-    var Q = params.Q
-    var Fc = params.Fc
-    var Fs = params.Fs
-    var pre = {}
-    var w = 2 * Math.PI * Fc / Fs
+  const preCalcGain = function (params) {
+    const Q = params.Q
+    const Fc = params.Fc
+    const Fs = params.Fs
+    const pre = {}
+    const w = 2 * Math.PI * Fc / Fs
     pre.alpha = Math.sin(w) / (2 * Q)
     pre.cw = Math.cos(w)
     pre.A = Math.pow(10, params.gain / 40)
     return pre
   }
 
-  var initCoeffs = function () {
-    var coeffs = {}
+  const initCoeffs = function () {
+    const coeffs = {}
     coeffs.z = [0, 0]
     coeffs.a = []
     coeffs.b = []
     return coeffs
   }
 
-  var self = {
+  const self = {
 
     fromPZ: function (params) {
-      var coeffs = initCoeffs()
+      const coeffs = initCoeffs()
       coeffs.a0 = 1
       coeffs.b.push(1)
       coeffs.b.push(-params.z0.re - params.z1.re)
@@ -61,12 +61,12 @@ var IirCoeffs = function () {
 
     // lowpass matched-z transform: H(s) = 1/(1+a's/w_c+b's^2/w_c)
     lowpassMZ: function (params) {
-      var coeffs = initCoeffs()
+      const coeffs = initCoeffs()
       coeffs.a0 = 1
-      var as = params.as
-      var bs = params.bs
-      var w = 2 * Math.PI * params.Fc / params.Fs
-      var s = -(as / (2 * bs))
+      const as = params.as
+      const bs = params.bs
+      const w = 2 * Math.PI * params.Fc / params.Fs
+      const s = -(as / (2 * bs))
       coeffs.a.push(-Math.pow(Math.E, s * w) * 2 * Math.cos(-w * Math.sqrt(Math.abs(Math.pow(as, 2) / (4 * Math.pow(bs, 2)) - 1 / bs))))
       coeffs.a.push(Math.pow(Math.E, 2 * s * w))
       // correct gain
@@ -84,7 +84,7 @@ var IirCoeffs = function () {
 
     // Bessel-Thomson: H(s) = 3/(s^2+3*s+3)
     lowpassBT: function (params) {
-      var coeffs = initCoeffs()
+      const coeffs = initCoeffs()
       params.Q = 1
       coeffs.wp = Math.tan((2 * Math.PI * params.Fc) / (2 * params.Fs))
       coeffs.wp2 = coeffs.wp * coeffs.wp
@@ -102,7 +102,7 @@ var IirCoeffs = function () {
     },
 
     highpassBT: function (params) {
-      var coeffs = initCoeffs()
+      const coeffs = initCoeffs()
       params.Q = 1
       coeffs.wp = Math.tan((2 * Math.PI * params.Fc) / (2 * params.Fs))
       coeffs.wp2 = coeffs.wp * coeffs.wp
@@ -124,11 +124,11 @@ var IirCoeffs = function () {
      */
     // H(s) = 1 / (s^2 + s/Q + 1)
     lowpass: function (params) {
-      var coeffs = initCoeffs()
+      const coeffs = initCoeffs()
       if (params.BW) {
         delete params.BW
       }
-      var p = preCalc(params, coeffs)
+      const p = preCalc(params, coeffs)
       if (params.preGain) {
         coeffs.k = (1 - p.cw) * 0.5
         coeffs.b.push(1 / (p.a0))
@@ -143,11 +143,11 @@ var IirCoeffs = function () {
 
     // H(s) = s^2 / (s^2 + s/Q + 1)
     highpass: function (params) {
-      var coeffs = initCoeffs()
+      const coeffs = initCoeffs()
       if (params.BW) {
         delete params.BW
       }
-      var p = preCalc(params, coeffs)
+      const p = preCalc(params, coeffs)
       if (params.preGain) {
         coeffs.k = (1 + p.cw) * 0.5
         coeffs.b.push(1 / (p.a0))
@@ -162,11 +162,11 @@ var IirCoeffs = function () {
 
     // H(s) = (s^2 - s/Q + 1) / (s^2 + s/Q + 1)
     allpass: function (params) {
-      var coeffs = initCoeffs()
+      const coeffs = initCoeffs()
       if (params.BW) {
         delete params.BW
       }
-      var p = preCalc(params, coeffs)
+      const p = preCalc(params, coeffs)
       coeffs.k = 1
       coeffs.b.push((1 - p.alpha) / p.a0)
       coeffs.b.push(-2 * p.cw / p.a0)
@@ -176,8 +176,8 @@ var IirCoeffs = function () {
 
     // H(s) = s / (s^2 + s/Q + 1)
     bandpassQ: function (params) {
-      var coeffs = initCoeffs()
-      var p = preCalc(params, coeffs)
+      const coeffs = initCoeffs()
+      const p = preCalc(params, coeffs)
       coeffs.k = 1
       coeffs.b.push(p.alpha * params.Q / p.a0)
       coeffs.b.push(0)
@@ -187,8 +187,8 @@ var IirCoeffs = function () {
 
     // H(s) = (s/Q) / (s^2 + s/Q + 1)
     bandpass: function (params) {
-      var coeffs = initCoeffs()
-      var p = preCalc(params, coeffs)
+      const coeffs = initCoeffs()
+      const p = preCalc(params, coeffs)
       coeffs.k = 1
       coeffs.b.push(p.alpha / p.a0)
       coeffs.b.push(0)
@@ -198,8 +198,8 @@ var IirCoeffs = function () {
 
     // H(s) = (s^2 + 1) / (s^2 + s/Q + 1)
     bandstop: function (params) {
-      var coeffs = initCoeffs()
-      var p = preCalc(params, coeffs)
+      const coeffs = initCoeffs()
+      const p = preCalc(params, coeffs)
       coeffs.k = 1
       coeffs.b.push(1 / p.a0)
       coeffs.b.push(-2 * p.cw / p.a0)
@@ -209,8 +209,8 @@ var IirCoeffs = function () {
 
     // H(s) = (s^2 + s*(A/Q) + 1) / (s^2 + s/(A*Q) + 1)
     peak: function (params) {
-      var coeffs = initCoeffs()
-      var p = preCalcGain(params)
+      const coeffs = initCoeffs()
+      const p = preCalcGain(params)
       coeffs.k = 1
       coeffs.a0 = 1 + p.alpha / p.A
       coeffs.a.push(-2 * p.cw / coeffs.a0)
@@ -223,13 +223,13 @@ var IirCoeffs = function () {
 
     // H(s) = A * (s^2 + (sqrt(A)/Q)*s + A)/(A*s^2 + (sqrt(A)/Q)*s + 1)
     lowshelf: function (params) {
-      var coeffs = initCoeffs()
+      const coeffs = initCoeffs()
       if (params.BW) {
         delete params.BW
       }
-      var p = preCalcGain(params)
+      const p = preCalcGain(params)
       coeffs.k = 1
-      var sa = 2 * Math.sqrt(p.A) * p.alpha
+      const sa = 2 * Math.sqrt(p.A) * p.alpha
       coeffs.a0 = (p.A + 1) + (p.A - 1) * p.cw + sa
       coeffs.a.push((-2 * ((p.A - 1) + (p.A + 1) * p.cw)) / coeffs.a0)
       coeffs.a.push(((p.A + 1) + (p.A - 1) * p.cw - sa) / coeffs.a0)
@@ -241,13 +241,13 @@ var IirCoeffs = function () {
 
     // H(s) = A * (A*s^2 + (sqrt(A)/Q)*s + 1)/(s^2 + (sqrt(A)/Q)*s + A)
     highshelf: function (params) {
-      var coeffs = initCoeffs()
+      const coeffs = initCoeffs()
       if (params.BW) {
         delete params.BW
       }
-      var p = preCalcGain(params)
+      const p = preCalcGain(params)
       coeffs.k = 1
-      var sa = 2 * Math.sqrt(p.A) * p.alpha
+      const sa = 2 * Math.sqrt(p.A) * p.alpha
       coeffs.a0 = (p.A + 1) - (p.A - 1) * p.cw + sa
       coeffs.a.push((2 * ((p.A - 1) - (p.A + 1) * p.cw)) / coeffs.a0)
       coeffs.a.push(((p.A + 1) - (p.A - 1) * p.cw - sa) / coeffs.a0)
@@ -260,12 +260,12 @@ var IirCoeffs = function () {
     // taken from: Design of digital filters for frequency weightings (A and C) required for risk assessments of workers exposed to noise
     // use Butterworth one stage IIR filter to get the results from the paper
     aweighting: function (params) {
-      var coeffs = initCoeffs()
+      const coeffs = initCoeffs()
       coeffs.k = 1
-      var wo = 2 * Math.PI * params.Fc / params.Fs
-      var w = 2 * Math.tan(wo / 2)
-      var Q = params.Q
-      var wsq = Math.pow(w, 2)
+      const wo = 2 * Math.PI * params.Fc / params.Fs
+      const w = 2 * Math.tan(wo / 2)
+      const Q = params.Q
+      const wsq = Math.pow(w, 2)
       coeffs.a0 = 4 * Q + wsq * Q + 2 * w
       coeffs.a.push(2 * wsq * Q - 8 * Q)
       coeffs.a.push((4 * Q + wsq * Q - 2 * w))

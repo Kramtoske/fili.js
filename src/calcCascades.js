@@ -1,10 +1,10 @@
 'use strict'
 
-var IirCoeffs = require('./iirCoeffs')
+const IirCoeffs = require('./iirCoeffs')
 
-var getCoeffs = new IirCoeffs()
+const getCoeffs = new IirCoeffs()
 
-var table = {
+const table = {
   // values from https://gist.github.com/endolith/4982787#file-all-values-txt
   bessel: {
     q: [
@@ -53,7 +53,7 @@ var table = {
 }
 
 // from Texas Instruments "Op Amps for Everyone" Chapter 16 "Active Filter Design Techniques"
-var tiTable = {
+const tiTable = {
   bessel: {
     as: [
       [1.3617],
@@ -168,17 +168,17 @@ var tiTable = {
   }
 }
 
-var calcCoeffs = function (params, behavior) {
-  var filter = []
-  var cnt = 0
+const calcCoeffs = function (params, behavior) {
+  const filter = []
+  let cnt = 0
   if (behavior !== 'fromPZ') {
     if (params.order > 12) {
       params.order = 12
     }
     for (cnt = 0; cnt < params.order; cnt++) {
-      var q, f, fd
+      let q, f, fd
       if (params.transform === 'matchedZ') {
-        filter.push(getCoeffs['lowpassMZ']({
+        filter.push(getCoeffs.lowpassMZ({
           Fs: params.Fs,
           Fc: params.Fc,
           preGain: params.preGain,
@@ -227,16 +227,16 @@ var calcCoeffs = function (params, behavior) {
   return filter
 }
 
-var initCalcCoeffs = function (behavior) {
+const initCalcCoeffs = function (behavior) {
   return function (params) {
     return calcCoeffs(params, behavior)
   }
 }
 
-var self = {}
-var CalcCascades = function () {
-  var available = []
-  for (var k in getCoeffs) {
+const self = {}
+const CalcCascades = function () {
+  const available = []
+  for (const k in getCoeffs) {
     self[k] = initCalcCoeffs(k)
     available.push(k)
   }
