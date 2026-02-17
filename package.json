@@ -4,6 +4,13 @@
   "main": "dist/fili.min.js",
   "author": "Florian Markert",
   "license": "MIT",
+  "files": [
+    "dist/",
+    "src/",
+    "index.js",
+    "README.md",
+    "LICENSE.md"
+  ],
   "devDependencies": {
     "@babel/core": "^7.24.0",
     "@babel/preset-env": "^7.24.0",
