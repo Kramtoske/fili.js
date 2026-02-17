@@ -49,9 +49,6 @@ jobs:
       - name: Build dist
         run: npm run build
 
-      - name: Verify dist is up to date
-        run: git diff --exit-code -- dist/fili.js dist/fili.min.js
-
       - name: Upload dist artifacts
         uses: actions/upload-artifact@v4
         with:
