@@ -25,7 +25,7 @@
     "build": "mkdir -p dist && browserify ./index.js --standalone Fili -t [babelify] -t [envify --NODE_ENV production] -p [bannerify --file ./banner.txt] -o ./dist/fili.js && uglifyjs ./dist/fili.js --compress --mangle --comments -o ./dist/fili.min.js",
     "build:all": "npm run build && npm run sbom",
     "test": "standard && mocha --recursive test",
-    "sbom": "mkdir -p dist && cyclonedx-npm --package-lock-only --ignore-npm-errors --validate --output-file dist/sbom.cdx.json"
+    "sbom": "mkdir -p dist && cyclonedx-npm --package-lock-only --ignore-npm-errors --validate --output-reproducible --output-file dist/sbom.cdx.json"
   },
   "browserify": {
     "transform": [
