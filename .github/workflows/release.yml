@@ -46,8 +46,6 @@ jobs:
           fi
 
       - name: Publish to npm (OIDC)
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --provenance --access public
 
       - name: Create or update release assets
