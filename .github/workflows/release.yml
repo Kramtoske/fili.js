@@ -45,8 +45,43 @@ jobs:
             exit 1
           fi
 
-      - name: Publish to npm (OIDC)
-        run: npm publish --provenance --access public
+      - name: Verify build artifacts
+        run: |
+          echo "Verifying dist files exist..."
+          if [ ! -f "dist/fili.js" ]; then
+            echo "❌ Error: dist/fili.js not found"
+            exit 1
+          fi
+          if [ ! -f "dist/fili.min.js" ]; then
+            echo "❌ Error: dist/fili.min.js not found"
+            exit 1
+          fi
+          if [ ! -f "dist/sbom.cdx.json" ]; then
+            echo "❌ Error: dist/sbom.cdx.json not found"
+            exit 1
+          fi
+          echo "✅ All build artifacts verified:"
+          ls -lh dist/
+          echo ""
+          echo "Package contents:"
+          npm pack --dry-run
+
+      - name: Publish to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "📝 Publishing using OIDC (Trusted Publishing)..."
+            echo "⚠️  If this fails, you need to configure NPM Trusted Publishing:"
+            echo "   1. Go to https://www.npmjs.com/package/@kramtoske/fili/access"
+            echo "   2. Add GitHub as trusted publisher: Kramtoske/fili.js, workflow: release.yml, environment: release"
+            echo "   3. See .github/NPM_TRUSTED_PUBLISHING.md for detailed instructions"
+            echo ""
+            npm publish --provenance --access public
+          else
+            echo "📝 Publishing using NPM_TOKEN (traditional authentication)..."
+            npm publish --access public
+          fi
 
       - name: Create or update release assets
         env:
