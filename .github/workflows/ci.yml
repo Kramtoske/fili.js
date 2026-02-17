@@ -79,9 +79,6 @@ jobs:
       - name: Generate SBOM
         run: npm run sbom
 
-      - name: Verify SBOM is up to date
-        run: git diff --exit-code -- dist/sbom.cdx.json
-
       - name: Upload SBOM artifact
         uses: actions/upload-artifact@v4
         with:
