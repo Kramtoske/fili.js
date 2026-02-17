@@ -23,7 +23,7 @@ This is the most secure method and doesn't require storing any tokens.
    - **Environment name**: `release`
 6. Click **"Add publisher"**
 
-See [.github/NPM_TRUSTED_PUBLISHING.md](.github/NPM_TRUSTED_PUBLISHING.md) for more details.
+See [NPM_TRUSTED_PUBLISHING.md](NPM_TRUSTED_PUBLISHING.md) for more details.
 
 ### Option 2: NPM Token (Alternative)
 

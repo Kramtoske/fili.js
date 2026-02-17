@@ -89,8 +89,6 @@ You can add protection rules to the `release` environment:
 
 ## Troubleshooting
 
-## Troubleshooting
-
 ### "Unable to authenticate" or "404 Not found" error
 
 **Cause**: Trusted publisher not configured in NPM or configuration mismatch
@@ -115,15 +113,6 @@ npm error 404  '@kramtoske/fili@X.X.X' is not in this registry.
 1. Generate an NPM automation token at https://www.npmjs.com/settings/~/tokens
 2. Add it as a GitHub secret named `NPM_TOKEN`
 3. The workflow will automatically use token-based authentication as a fallback
-
-### "Unable to authenticate" error
-
-**Cause**: Trusted publisher not configured in NPM or configuration mismatch
-
-**Solution**: Verify NPM trusted publisher settings match:
-- Repository: `Kramtoske/fili.js`
-- Workflow: `release.yml`
-- Environment: `release`
 
 ### "id-token permission required" error
 
