@@ -13,7 +13,6 @@ on:
 
 permissions:
     contents: write
-    id-token: write
 
 jobs:
     release:
@@ -33,11 +32,9 @@ jobs:
               with:
                   ref: ${{ env.RELEASE_TAG }}
 
-            # ❗ BE registry-url
             - uses: actions/setup-node@v4
               with:
                   node-version: 20
-                  registry-url: https://registry.npmjs.org/
 
             - name: Install deps
               run: npm ci
@@ -57,23 +54,14 @@ jobs:
                     exit 1
                   fi
 
-            - name: Show trusted publishing identity
-              run: |
-                  echo "GITHUB_REPOSITORY=$GITHUB_REPOSITORY"
-                  echo "GITHUB_REF_NAME=$GITHUB_REF_NAME"
-                  echo "RELEASE_TAG=$RELEASE_TAG"
-                  echo "GITHUB_WORKFLOW_REF=$GITHUB_WORKFLOW_REF"
-                  if [ -n "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" ] && [ -n "${ACTIONS_ID_TOKEN_REQUEST_TOKEN:-}" ]; then
-                    TOKEN_JSON=$(curl -sSf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-                      "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=npm:registry.npmjs.org")
-                    OIDC_TOKEN=$(echo "$TOKEN_JSON" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const j=JSON.parse(d);process.stdout.write(j.value||'')})")
-                    if [ -n "$OIDC_TOKEN" ]; then
-                      echo "$OIDC_TOKEN" | node -e "let t='';process.stdin.on('data',c=>t+=c);process.stdin.on('end',()=>{const p=t.trim().split('.')[1];const payload=JSON.parse(Buffer.from(p,'base64url').toString('utf8'));console.log('OIDC sub='+(payload.sub||''));console.log('OIDC job_workflow_ref='+(payload.job_workflow_ref||''));console.log('OIDC repository='+(payload.repository||''));})"
-                    fi
-                  fi
-
-            - name: Publish to npm (OIDC Trusted Publishing)
-              run: npm publish --provenance --access public
+            - name: Upload build artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: dist-${{ env.RELEASE_TAG }}
+                  path: |
+                      dist/fili.js
+                      dist/fili.min.js
+                      dist/sbom.cdx.json
 
             - name: Create GitHub Release
               env:
