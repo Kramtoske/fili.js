@@ -89,14 +89,30 @@ You can add protection rules to the `release` environment:
 
 ## Troubleshooting
 
-### "Unable to authenticate" error
+### "Unable to authenticate" or "404 Not found" error
 
 **Cause**: Trusted publisher not configured in NPM or configuration mismatch
 
-**Solution**: Verify NPM trusted publisher settings match:
-- Repository: `Kramtoske/fili.js`
-- Workflow: `release.yml`
-- Environment: `release`
+**Error messages you might see:**
+```
+npm notice Access token expired or revoked. Please try logging in again.
+npm error 404 Not Found - PUT https://registry.npmjs.org/@kramtoske%2ffili
+npm error 404  '@kramtoske/fili@X.X.X' is not in this registry.
+```
+
+**Solution**: 
+1. Verify NPM trusted publisher settings match:
+   - Repository: `Kramtoske/fili.js`
+   - Workflow: `release.yml`
+   - Environment: `release`
+2. Go to https://www.npmjs.com/package/@kramtoske/fili/access
+3. Under "Publishing access", select "Require two-factor authentication and disallow tokens (recommended)"
+4. Add GitHub as a trusted publisher with the exact settings above
+
+**Alternative Solution (if trusted publishing setup is not possible):**
+1. Generate an NPM automation token at https://www.npmjs.com/settings/~/tokens
+2. Add it as a GitHub secret named `NPM_TOKEN`
+3. The workflow will automatically use token-based authentication as a fallback
 
 ### "id-token permission required" error
 
