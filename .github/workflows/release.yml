@@ -4,6 +4,12 @@ on:
     push:
         tags:
             - "v*"
+    workflow_dispatch:
+        inputs:
+            release_tag:
+                description: "Tag to release (example: v2.0.22)"
+                required: true
+                type: string
 
 permissions:
     contents: write
@@ -15,7 +21,17 @@ jobs:
         environment: release
 
         steps:
+            - name: Resolve release tag
+              run: |
+                  if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+                    echo "RELEASE_TAG=${{ github.event.inputs.release_tag }}" >> "$GITHUB_ENV"
+                  else
+                    echo "RELEASE_TAG=${GITHUB_REF_NAME}" >> "$GITHUB_ENV"
+                  fi
+
             - uses: actions/checkout@v4
+              with:
+                  ref: ${{ env.RELEASE_TAG }}
 
             # ❗ BE registry-url
             - uses: actions/setup-node@v4
@@ -34,7 +50,7 @@ jobs:
 
             - name: Validate tag matches package.json
               run: |
-                  TAG_VERSION="${GITHUB_REF_NAME#v}"
+                  TAG_VERSION="${RELEASE_TAG#v}"
                   PKG_VERSION=$(node -p "require('./package.json').version")
                   if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
                     echo "Tag $TAG_VERSION != package.json $PKG_VERSION"
@@ -45,6 +61,7 @@ jobs:
               run: |
                   echo "GITHUB_REPOSITORY=$GITHUB_REPOSITORY"
                   echo "GITHUB_REF_NAME=$GITHUB_REF_NAME"
+                  echo "RELEASE_TAG=$RELEASE_TAG"
                   echo "GITHUB_WORKFLOW_REF=$GITHUB_WORKFLOW_REF"
                   if [ -n "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" ] && [ -n "${ACTIONS_ID_TOKEN_REQUEST_TOKEN:-}" ]; then
                     TOKEN_JSON=$(curl -sSf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
@@ -62,8 +79,8 @@ jobs:
               env:
                   GH_TOKEN: ${{ github.token }}
               run: |
-                  gh release create "$GITHUB_REF_NAME" \
-                    --title "$GITHUB_REF_NAME" \
+                  gh release create "$RELEASE_TAG" \
+                    --title "$RELEASE_TAG" \
                     --generate-notes \
                     dist/fili.js \
                     dist/fili.min.js \
