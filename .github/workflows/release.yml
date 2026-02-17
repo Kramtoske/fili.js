@@ -40,7 +40,21 @@ jobs:
             exit 1
           fi
 
+      - name: Enforce Trusted Publishing auth path
+        run: |
+          # setup-node may write npm auth config; remove any token auth so OIDC is used.
+          if [ -n "${NPM_CONFIG_USERCONFIG:-}" ] && [ -f "$NPM_CONFIG_USERCONFIG" ]; then
+            sed -i '/:_authToken=/d' "$NPM_CONFIG_USERCONFIG"
+          fi
+          npm config delete //registry.npmjs.org/:_authToken || true
+          if [ -n "${NODE_AUTH_TOKEN:-}" ]; then
+            echo "❌ NODE_AUTH_TOKEN is set. Remove repo/environment token for Trusted Publishing."
+            exit 1
+          fi
+
       - name: Publish to npm (Trusted Publishing)
+        env:
+          NODE_AUTH_TOKEN: ""
         run: npm publish --provenance --access public
 
       - name: Create GitHub Release
