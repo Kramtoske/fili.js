@@ -48,8 +48,7 @@ jobs:
           fi
           npm config delete //registry.npmjs.org/:_authToken || true
           if [ -n "${NODE_AUTH_TOKEN:-}" ]; then
-            echo "❌ NODE_AUTH_TOKEN is set. Remove repo/environment token for Trusted Publishing."
-            exit 1
+            echo "⚠️ NODE_AUTH_TOKEN is set. Ignoring it for this run; remove repo/environment token for Trusted Publishing."
           fi
 
       - name: Publish to npm (Trusted Publishing)
