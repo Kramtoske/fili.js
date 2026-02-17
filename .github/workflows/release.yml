@@ -48,10 +48,32 @@ jobs:
                   fi
                   npm config delete //registry.npmjs.org/:_authToken || true
 
-            # ❗ BE env, BE tokenų
+            - name: Show trusted publishing identity
+              run: |
+                  echo "GITHUB_REPOSITORY=$GITHUB_REPOSITORY"
+                  echo "GITHUB_REF_NAME=$GITHUB_REF_NAME"
+                  echo "GITHUB_WORKFLOW_REF=$GITHUB_WORKFLOW_REF"
+                  if [ -n "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" ] && [ -n "${ACTIONS_ID_TOKEN_REQUEST_TOKEN:-}" ]; then
+                    TOKEN_JSON=$(curl -sSf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+                      "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=npm:registry.npmjs.org")
+                    OIDC_TOKEN=$(echo "$TOKEN_JSON" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const j=JSON.parse(d);process.stdout.write(j.value||'')})")
+                    if [ -n "$OIDC_TOKEN" ]; then
+                      echo "$OIDC_TOKEN" | node -e "let t='';process.stdin.on('data',c=>t+=c);process.stdin.on('end',()=>{const p=t.trim().split('.')[1];const payload=JSON.parse(Buffer.from(p,'base64url').toString('utf8'));console.log('OIDC sub='+(payload.sub||''));console.log('OIDC job_workflow_ref='+(payload.job_workflow_ref||''));console.log('OIDC repository='+(payload.repository||''));})"
+                    fi
+                  fi
+
+            - name: Prepare clean npm config
+              run: |
+                  cat > "$GITHUB_WORKSPACE/.npmrc.publish" << 'EOF'
+                  registry=https://registry.npmjs.org/
+                  always-auth=false
+                  EOF
+
             - name: Publish to npm (OIDC Trusted Publishing)
               env:
                   NODE_AUTH_TOKEN: ""
+                  NPM_TOKEN: ""
+                  NPM_CONFIG_USERCONFIG: ${{ github.workspace }}/.npmrc.publish
               run: npm publish --provenance --access public
 
             - name: Create GitHub Release
