@@ -1,6 +1,6 @@
 {
   "name": "@kramtoske/fili",
-  "version": "2.0.22",
+  "version": "2.0.23",
   "main": "dist/fili.min.js",
   "author": "Florian Markert",
   "license": "MIT",
