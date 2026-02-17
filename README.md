@@ -1,7 +1,7 @@
 # fili
 
 [![npm version](https://badge.fury.io/js/fili.svg)](http://badge.fury.io/js/fili)
-[![Build Status](https://travis-ci.org/markert/fili.js.svg?branch=master)](https://travis-ci.org/markert/fili.js)
+[![CI](https://github.com/Kramtoske/fili.js/actions/workflows/ci.yml/badge.svg)](https://github.com/Kramtoske/fili.js/actions/workflows/ci.yml)
 
 A digital filter library for JavaScript.
 
@@ -16,9 +16,9 @@ $ npm i @kramtoske/fili
 ##### Node
 
 ```js
-var Fili = require('fili');
+const Fili = require('fili');
 
-var iirCalculator = new Fili.CalcCascades();
+const iirCalculator = new Fili.CalcCascades();
 ```
 
 ##### Browser
@@ -290,7 +290,6 @@ $ make test
 ```
 
 ## TODO
-- add travis
 - add wavelet transform
 - add Parks-McClellan FIR algorithm
 - add iir filters other than biquad

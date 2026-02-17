@@ -8,7 +8,7 @@
     "@babel/core": "^7.24.0",
     "@babel/preset-env": "^7.24.0",
     "@cyclonedx/cyclonedx-npm": "^4.1.2",
-    "ajv": "^8.17.1",
+    "ajv": "^8.18.0",
     "ajv-formats": "^3.0.1",
     "ajv-formats-draft2019": "^1.6.1",
     "babelify": "^10.0.0",
@@ -22,6 +22,8 @@
     "uglify-js": "^3.19.3"
   },
   "scripts": {
+    "build": "mkdir -p dist && browserify ./index.js --standalone Fili -t [babelify] -t [envify --NODE_ENV production] -p [bannerify --file ./banner.txt] -o ./dist/fili.js && uglifyjs ./dist/fili.js --compress --mangle --comments -o ./dist/fili.min.js",
+    "build:all": "npm run build && npm run sbom",
     "test": "standard && mocha --recursive test",
     "sbom": "mkdir -p dist && cyclonedx-npm --package-lock-only --ignore-npm-errors --validate --output-file dist/sbom.cdx.json"
   },

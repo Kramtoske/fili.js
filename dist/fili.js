@@ -1,6 +1,6 @@
 /**
  * @name    @kramtoske/fili
- * @version 2.0.5 | January 29th 2026
+ * @version 2.0.5 | February 17th 2026
  * @author  Florian Markert
  * @license MIT
  */

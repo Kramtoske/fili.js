@@ -9,10 +9,9 @@ build:
 	--standalone Fili \
 	-t [babelify] \
 	-t [envify --NODE_ENV production] \
-	-p [bannerify --file ./dist/banner.txt] \
+	-p [bannerify --file ./banner.txt] \
 	-o ./dist/fili.js
 	$(UGLIFY) ./dist/fili.js --compress --mangle --comments -o ./dist/fili.min.js
-	npm run sbom
 
 sbom:
 	npm run sbom
