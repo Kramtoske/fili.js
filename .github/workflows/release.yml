@@ -41,13 +41,6 @@ jobs:
                     exit 1
                   fi
 
-            - name: Force OIDC auth (remove token auth)
-              run: |
-                  if [ -n "${NPM_CONFIG_USERCONFIG:-}" ] && [ -f "$NPM_CONFIG_USERCONFIG" ]; then
-                    sed -i '/:_authToken=/d' "$NPM_CONFIG_USERCONFIG"
-                  fi
-                  npm config delete //registry.npmjs.org/:_authToken || true
-
             - name: Show trusted publishing identity
               run: |
                   echo "GITHUB_REPOSITORY=$GITHUB_REPOSITORY"
@@ -62,18 +55,7 @@ jobs:
                     fi
                   fi
 
-            - name: Prepare clean npm config
-              run: |
-                  cat > "$GITHUB_WORKSPACE/.npmrc.publish" << 'EOF'
-                  registry=https://registry.npmjs.org/
-                  always-auth=false
-                  EOF
-
             - name: Publish to npm (OIDC Trusted Publishing)
-              env:
-                  NODE_AUTH_TOKEN: ""
-                  NPM_TOKEN: ""
-                  NPM_CONFIG_USERCONFIG: ${{ github.workspace }}/.npmrc.publish
               run: npm publish --provenance --access public
 
             - name: Create GitHub Release
